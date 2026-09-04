@@ -20,12 +20,20 @@ method attached: [METHOD.md](METHOD.md).
 All figures are paired duels, both legs reported, one variable at a time, taken
 2026-09-03. Each directory carries the full sweep, not just the winner.
 
+Two lanes need a patched llama.cpp build. **Read [BUILD.md](BUILD.md) before
+running any launcher here** — one of the kernel levers is an environment
+variable that a stock build ignores in silence.
+
 ## Contents
 
 - [`ds4v/`](ds4v/) — DeepSeek-V4-Flash-Vision-Exp (deepseek4, UD-IQ3_XXS, ~97 GB)
 - [`glm-5.3-flash/`](glm-5.3-flash/) — GLM-5.3-Flash
 - [`qwen3.8-flash-next/`](qwen3.8-flash-next/) — Qwen3.8-Flash-Next
 - [`qwen3.8-27b-dense/`](qwen3.8-27b-dense/) — Qwen3.8-27B dense
+- [`BUILD.md`](BUILD.md) — which patches and PRs each lane needs, and how a
+  missing one fails silently
+- [`patches/`](patches/) — the flash-attention row-gather commits, as `git am`
+  patches
 - [`METHOD.md`](METHOD.md) — how the numbers were taken, and the traps that
   produce convincing wrong ones
 - [`KNOWN_CRASH.md`](KNOWN_CRASH.md) — reproducible ROCm illegal-memory-access,
@@ -38,8 +46,9 @@ All figures are paired duels, both legs reported, one variable at a time, taken
 
 **Diff the lane next door before you go looking for a new flag.** The single
 biggest prefill win here — depth-loss cut by a factor of three — came from
-copying settings that were already in production one lane over. No kernel work,
-no new flag, no discovery. Just reading what was already written down.
+copying settings that were already in production on another lane of the same
+box. No new kernel work, no new flag, no discovery. Just reading what I had
+already written down and had stopped looking at.
 
 ## Related
 

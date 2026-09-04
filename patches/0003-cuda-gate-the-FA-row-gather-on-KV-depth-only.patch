@@ -1,0 +1,36 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Yaniss <yaniss91600@gmail.com>
+Date: Sat, 1 Aug 2026 17:50:32 +0200
+Subject: [PATCH] cuda: gate the FA row gather on KV depth only
+
+The gather was gated on Q->ne[1] >= 1024, which only holds on a cold prefill
+with -ub 2048. A cached server turn re-prefills a few hundred tokens against a
+deep KV cache and took the dense path -- the regime where the gather pays most,
+since the union of KV rows a Q tile walks is bounded by ncols1*top_k whatever
+the number of query rows. Gate on KV depth instead: at least four tiles of
+cache, below which there is nothing to skip and the prepass is pure cost.
+---
+ ggml/src/ggml-cuda/fattn-common.cuh | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/ggml/src/ggml-cuda/fattn-common.cuh b/ggml/src/ggml-cuda/fattn-common.cuh
+index 2423b2c98..7c4c3985d 100644
+--- a/ggml/src/ggml-cuda/fattn-common.cuh
++++ b/ggml/src/ggml-cuda/fattn-common.cuh
+@@ -1162,10 +1162,14 @@ static bool fattn_row_gather_enabled(const ggml_tensor * dst) {
+     if (!env) {
+         return false;
+     }
+-    const ggml_tensor * Q    = dst->src[0];
+     const ggml_tensor * K    = dst->src[1];
+     const ggml_tensor * mask = dst->src[3];
+-    return mask && K->ne[1] % FATTN_KQ_STRIDE == 0 && (Q->ne[1] >= 1024 || Q->ne[3] > 1);
++    // Gate on the KV side only. The union a Q tile walks is bounded by ncols1*top_k whatever the
++    // number of query rows, so a SHORT ubatch against a deep cache -- exactly what a cached server
++    // turn re-prefills -- is where the gather pays most. A Q->ne[1] >= 1024 gate would have turned
++    // it off for every one of those turns. Below a few tiles of KV there is nothing to skip and the
++    // prepass is pure cost.
++    return mask && K->ne[1] % FATTN_KQ_STRIDE == 0 && K->ne[1] >= 4*FATTN_KQ_STRIDE;
+ }
+ 
+ template <int DV, int ncols1, int ncols2>

@@ -51,8 +51,15 @@ tuning it had never been given. Porting that block over, unchanged:
 | before | 209.8 t/s | 152.5 t/s | -27.3% |
 | **after** | **262.7 t/s** | **239.5 t/s** | **-8.8%** |
 
-Not one line of kernel work. The settings were already written down, in
-production, one lane over.
+No new kernel work for this result. The patch exists (`patches/`, see
+[BUILD.md](../BUILD.md)) and had been running in production on the text-only
+lane for weeks; the vision lane had simply never been given the flags. The whole
+win was reading a launcher I had already written and copying two lines.
+
+If you are reproducing this on a stock llama.cpp build, read
+[BUILD.md](../BUILD.md) first: `DSV4_FA_ROW_GATHER=1` on an unpatched binary is
+an environment variable nothing reads, and you will measure the `before` row
+twice.
 
 **The transferable lesson: diff the neighbouring lane before you go looking for
 a new flag.**

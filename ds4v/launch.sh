@@ -11,7 +11,7 @@ set -euo pipefail
 
 MODEL=${DS4V_MODEL:?path to DeepSeek-V4-Flash-Vision-Exp-UD-IQ3_XXS-00001-of-00004.gguf}
 MMPROJ=${DS4V_MMPROJ:?path to mmproj-F16.gguf}
-SERVER=${DS4V_SERVER:-llama-server}
+SERVER=${DS4V_SERVER:?path to llama-server from a build with the patches in ../BUILD.md — do NOT default to $PATH, see BUILD.md}
 
 # --- chat template -----------------------------------------------------------
 # Pass a template explicitly. Benching the GGUF's internal jinja while serving a
