@@ -57,6 +57,19 @@ the time of writing:
 
 Fetch and cherry-pick both, in that order.
 
+### 3. GLM-5.3-Flash architecture (`glm5next`)
+
+Upstream llama.cpp has no `glm5next` architecture at all — the model will not
+load. The port is 26 commits (hparams and tensor loading, KDA linear attention,
+mHC wide residual, MoE feed-forward with clamped SwiGLU, dense DSA attention) and
+is too large to ship as patch files here; it lives on a branch of my llama.cpp
+fork. It is not upstream and I make no claim that it will be.
+
+The GLM lane additionally carries a fix for the MTP drafter skipping image
+batches (see `glm-5.3-flash/RESULTS.md` §4): mark the sequence when a batch
+carries an image, clear the drafter's KV for it on the next text batch. Without
+it, `--spec-type draft-mtp` plus `--mmproj` returns HTTP 500 on the first image.
+
 ## Build flags
 
 ```sh
