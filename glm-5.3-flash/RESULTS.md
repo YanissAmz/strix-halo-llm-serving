@@ -127,6 +127,15 @@ open question in this repo.
 
 Prefill decays too: 139.3 t/s at 14.7k → 88.3 at 49.7k → 63.8 at 84.9k (−54%).
 
+**And the drafter gains above do not survive that decay.** A separate paired
+duel at **65 791 real tokens** — the only GLM measurement here taken at genuine
+depth rather than at the short prompts the harness ships — averages **11.29 and
+10.58 t/s** over its two legs, against roughly 17 t/s for the same lane on short
+prompts. That is the same lesson [`../ds4v/RESULTS.md`](../ds4v/RESULTS.md) §1b
+carries for DeepSeek: a drafter number taken at 275 tokens tells you nothing
+about the same lane at depth. Read §§2–5 as short-context results, because they
+are.
+
 ⚠ False friend: "context is nearly free on GLM" is a statement about **memory**
 (+56% of window for +0.67 GiB). It says nothing about throughput, and the table
 above is the throughput.
