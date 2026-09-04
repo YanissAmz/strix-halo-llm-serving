@@ -132,6 +132,11 @@ MMAP=(--no-mmap)
 # Those three timings reproduce to 0.3% (232.4 / 233.1 / 233.8). That is the
 # control this lane requires before any A/B run on it.
 
+# One slot on purpose: multiple slots split a KV budget this lane does not have
+# (116.9 GiB of GTT out of 124.9 total). The 4-slot setup on the Qwen lanes,
+# which stops the preamble being re-prefilled, is untested here for that reason.
+# Comments never go inside the continuation below - they truncate the command
+# silently and bash -n still passes. See ../METHOD.md.
 exec "$SERVER" \
   --host 127.0.0.1 --port "$PORT" \
   -m "$MODEL" \

@@ -44,3 +44,19 @@ window — under the right alias. Check `/proc/<pid>/cmdline`, not the script.
 A daemon can keep the previous config in memory and only fail at the next
 restart. A served window can differ from the declared one. Verify what is
 serving, not what is written.
+
+## First touch is slower than the flag you are testing
+
+The first leg of a session pays page faults, allocator growth and GTT
+first-touch. On this box that cost is large enough to swamp the effect being
+measured: a flag once looked worth ±126 σ and was the arm order, not the flag.
+Every duel here runs a **warm-up leg at the target depth**, discarded, before
+the first measured leg — and then alternates arms so any residual drift hits
+both arms equally.
+
+## Both directions of a lesson are real
+
+`--spec-draft-p-min` filtering is worth +36% on the MoE GLM lane and is
+actively harmful on the dense 27B lane, where throughput falls monotonically
+while acceptance climbs to 93%. A setting that helps one lane is not a default.
+Re-measure per model, per quant.

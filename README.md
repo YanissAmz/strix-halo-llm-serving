@@ -20,8 +20,11 @@ method attached: [METHOD.md](METHOD.md).
 
 | [Qwen3.8-27B dense](qwen3.8-27b-dense/) | `MMVQ_MAX_BATCH_SIZE` 8 → 4 | 16.8 → **19.2 t/s** (+14%) | 30k depth |
 
-All figures are paired duels, both legs reported, one variable at a time, taken
-2026-09-03. Each directory carries the full sweep, not just the winner.
+The MoE rows are paired duels, both legs reported, one variable at a time, taken
+2026-09-03. The dense row comes from the kernel sweep in
+[`qwen3.8-27b-dense/RESULTS.md`](qwen3.8-27b-dense/RESULTS.md) — three reps per
+point, controls flat to 0.03%. Each directory carries the full sweep, not just
+the winner.
 
 Two lanes need a patched llama.cpp build. **Read [BUILD.md](BUILD.md) before
 running any launcher here** — one of the kernel levers is an environment

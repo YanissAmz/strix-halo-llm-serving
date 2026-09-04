@@ -1,7 +1,7 @@
 # Reproducible crash: `-ub 192` + dflash drafter on ROCm
 
-Not filed upstream — I am blocked from commenting on the repository. Documenting
-it here so it is public and citable; anyone able to file it, please do.
+Not filed upstream. Documented here so it is public and citable; if you can
+file it, please do.
 
 ## Symptom
 
