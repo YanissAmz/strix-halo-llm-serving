@@ -62,8 +62,20 @@ Fetch and cherry-pick both, in that order.
 Upstream llama.cpp has no `glm5next` architecture at all — the model will not
 load. The port is 26 commits (hparams and tensor loading, KDA linear attention,
 mHC wide residual, MoE feed-forward with clamped SwiGLU, dense DSA attention) and
-is too large to ship as patch files here; it lives on a branch of my llama.cpp
-fork. It is not upstream and I make no claim that it will be.
+is too large to ship as patch files here. It lives on a branch of my llama.cpp
+fork:
+
+```
+git remote add strix https://github.com/YanissAmz/llama.cpp.git
+git fetch strix glm5next-strix-halo
+git checkout strix/glm5next-strix-halo
+```
+
+That branch is 38 commits ahead of upstream `master`: the architecture port, the
+vision tower and its 0826 image preprocessor, the MTP draft head, DFlash2
+cherry-picked, and four HIP/RDNA3.5 kernel commits. It is not upstream and I
+make no claim that it will be. Build it with the flags at the bottom of this
+file; the FA patches in `patches/` are already in it.
 
 The GLM lane additionally carries a fix for the MTP drafter skipping image
 batches (see `glm-5.3-flash/RESULTS.md` §4): mark the sequence when a batch
