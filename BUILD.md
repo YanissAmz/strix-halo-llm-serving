@@ -70,6 +70,32 @@ batches (see `glm-5.3-flash/RESULTS.md` §4): mark the sequence when a batch
 carries an image, clear the drafter's KV for it on the next text batch. Without
 it, `--spec-type draft-mtp` plus `--mmproj` returns HTTP 500 on the first image.
 
+### 4. `MMVQ_MAX_BATCH_SIZE` = 4 (Qwen3.8-27B dense)
+
+Upstream ships this macro at 8. The dense lane runs it at 4, and `MMVF_MAX_BATCH_SIZE`
+with it — a `static_assert` ties them together:
+
+```diff
+--- a/ggml/src/ggml-cuda/mmvq.cuh
++++ b/ggml/src/ggml-cuda/mmvq.cuh
+-#define MMVQ_MAX_BATCH_SIZE 8 // Max. batch size for which to use MMVQ kernels.
++#define MMVQ_MAX_BATCH_SIZE 4 // Max. batch size for which to use MMVQ kernels.
+--- a/ggml/src/ggml-cuda/mmvf.cuh
++++ b/ggml/src/ggml-cuda/mmvf.cuh
+-#define MMVF_MAX_BATCH_SIZE 8 // Max. batch size for which to use MMVF kernels.
++#define MMVF_MAX_BATCH_SIZE 4 // Max. batch size for which to use MMVF kernels.
+```
+
+This is the single biggest win in that lane: the drafter's per-position cost drops
+from 24.3 ms to 2.25 ms, and best decode moves from 16.8 to 19.2 t/s. Every number
+in `qwen3.8-27b-dense/RESULTS.md` was taken at 4, not at 8 — build it at 8 and you
+will reproduce something slower.
+
+Note it is a **compilation** parameter, not a dispatch switch: the macro also feeds
+`__launch_bounds__`, so you cannot answer this by setting it to 0. To sweep the
+threshold, patch the dispatch function and read it from an environment variable, so
+the whole curve runs on one binary.
+
 ## Build flags
 
 ```sh
