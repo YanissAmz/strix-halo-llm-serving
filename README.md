@@ -1,8 +1,8 @@
-# Serving 100B+ MoE models on AMD Strix Halo (128 GB unified memory)
+# Serving large local models on AMD Strix Halo (128 GB unified memory)
 
 Launcher configs, drafter settings and paired benchmarks for running large
-mixture-of-experts models on a 128 GB Strix Halo box with llama.cpp — ROCm/HIP
-and Vulkan, no discrete GPU.
+mixture-of-experts models — and one 27B dense — on a 128 GB Strix Halo box
+with llama.cpp: ROCm/HIP and Vulkan, no discrete GPU.
 
 The hardware is cheap for the memory it carries and there is very little
 published data on what actually makes it fast. This is mine, measured, with the
@@ -14,13 +14,19 @@ method attached: [METHOD.md](METHOD.md).
 |---|---|---|---|
 | [DeepSeek-V4-Flash-Vision-Exp](ds4v/) | added an external DSpark drafter | 15.57 → **24.04 t/s** (+54.4%) | ~275 tok, win 131072 |
 | [DeepSeek-V4-Flash-Vision-Exp](ds4v/) | ported the neighbouring lane's prefill flags | prefill depth-loss -27.3% → **-8.8%** | 4k → 32k |
-| [GLM-5.3-Flash](glm-5.3-flash/) | DFlash2 drafter, `p_min` 0.60 | 13.89 → **17.14 t/s** (+23.4%) | measured at 98304, served at 65536 |
-| [GLM-5.3-Flash](glm-5.3-flash/) | then the free MTP head, for the 3.1 GiB | 15.77 → **17.37 t/s** (+10.2%) | 65536 |
-| [Qwen3.8-Flash-Next](qwen3.8-flash-next/) | shared MTP head as drafter | 27.0 → **36.0 t/s** (+33%) | 200704 |
-| [Qwen3.8-27B dense](qwen3.8-27b-dense/) | `MMVQ_MAX_BATCH_SIZE` 8 → 4 | 16.8 → **19.2 t/s** (+14%) | 30k depth |
+| [GLM-5.3-Flash](glm-5.3-flash/) | DFlash2 drafter, `p_min` 0.60 | 13.89 → **17.14 t/s** (+23.4%) | ~275 tok, win 98304 (lane serves 65536) |
+| [GLM-5.3-Flash](glm-5.3-flash/) | then the free MTP head, for the 3.1 GiB | 15.77 → **17.37 t/s** (+10.2%) | ~275 tok, win 65536 |
+| [Qwen3.8-Flash-Next](qwen3.8-flash-next/) | shared MTP head as drafter | 27.0 → **36.0 t/s** (+33%) | 1 prompt only, win 200704 |
+| [Qwen3.8-27B dense](qwen3.8-27b-dense/) | `MMVQ_MAX_BATCH_SIZE` 8 → 4 | 16.8 → **19.2 t/s** (+14%) | 30k tok |
+
+**Every depth above is the measured prompt depth, not the served window** — the
+two are different things and the difference decides whether a drafter pays at
+all (see [METHOD.md](METHOD.md) and [`ds4v/RESULTS.md`](ds4v/RESULTS.md) §1b).
+Three of these are short-prompt results and say so.
 
 The MoE rows are paired duels, both legs reported, one variable at a time, taken
-2026-09-03. The dense row comes from the kernel sweep in
+2026-09-03. The Qwen3.8-Flash-Next row is the weakest of the set — one prompt,
+one draw; the directory says so too. The dense row comes from the kernel sweep in
 [`qwen3.8-27b-dense/RESULTS.md`](qwen3.8-27b-dense/RESULTS.md) — three reps per
 point, controls flat to 0.03%. Each directory carries the full sweep, not just
 the winner.

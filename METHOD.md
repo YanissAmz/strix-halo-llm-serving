@@ -50,9 +50,13 @@ serving, not what is written.
 The first leg of a session pays page faults, allocator growth and GTT
 first-touch. On this box that cost is large enough to swamp the effect being
 measured: a flag once looked worth ±126 σ and was the arm order, not the flag.
-Every duel here runs a **warm-up leg at the target depth**, discarded, before
-the first measured leg — and then alternates arms so any residual drift hits
-both arms equally.
+Two defences, and only one of them is in every duel here. **Alternating arms**
+over two rounds is in the harness itself, so residual drift hits both arms
+equally — that is what `bench/paired-duel.sh` does. A **discarded warm-up leg at
+the target depth** was added later, after the `-ub` sweep on the Qwen lane where
+the rank effect was caught; the duels taken before that date do not have it, and
+the harness does not enforce it. If you reuse this harness, add the warm-up leg
+yourself — the harness will not do it for you.
 
 ## Both directions of a lesson are real
 
