@@ -17,7 +17,6 @@ method attached: [METHOD.md](METHOD.md).
 | [GLM-5.3-Flash](glm-5.3-flash/) | DFlash2 drafter, `p_min` 0.60 | 13.89 → **17.14 t/s** (+23.4%) | measured at 98304, served at 65536 |
 | [GLM-5.3-Flash](glm-5.3-flash/) | then the free MTP head, for the 3.1 GiB | 15.77 → **17.37 t/s** (+10.2%) | 65536 |
 | [Qwen3.8-Flash-Next](qwen3.8-flash-next/) | shared MTP head as drafter | 27.0 → **36.0 t/s** (+33%) | 200704 |
-
 | [Qwen3.8-27B dense](qwen3.8-27b-dense/) | `MMVQ_MAX_BATCH_SIZE` 8 → 4 | 16.8 → **19.2 t/s** (+14%) | 30k depth |
 
 The MoE rows are paired duels, both legs reported, one variable at a time, taken
