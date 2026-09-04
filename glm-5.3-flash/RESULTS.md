@@ -44,7 +44,20 @@ carries its instrument), both legs reported:
 | no drafter | 13.89 t/s |
 | **DFlash2, p_min 0.60** | **17.14 t/s** |
 
-**+23.4%**, acceptance 74.7% (109/146 drafted tokens).
+**+23.4%**, both legs reported above.
+
+> **The acceptance figure for this duel is not trustworthy and I am leaving it
+> out.** My notes record 74.7% (109/146). 146 drafted tokens is one prompt's
+> worth, and that is the shape of llama.cpp's per-slot summary line — the *last*
+> prompt's, not the run's. The same mistake was found and corrected in
+> [`../ds4v/RESULTS.md`](../ds4v/RESULTS.md) §1, where the aggregate turned out
+> to be 0.609 against a last-prompt 0.735. I could not re-derive this one: the
+> duel's logs are not in the directory the other duels wrote to. The throughput
+> rows stand — they are per-leg means and come from the same-day record — but
+> treat any acceptance number for this lane as unmeasured until it is re-run.
+
+Depth: prompts of the length the harness ships, at window 98304. Read this as a
+window figure, not a deep-context one.
 
 ## 3. Then the free drafter won anyway
 

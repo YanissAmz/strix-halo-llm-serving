@@ -60,3 +60,19 @@ both arms equally.
 actively harmful on the dense 27B lane, where throughput falls monotonically
 while acceptance climbs to 93%. A setting that helps one lane is not a default.
 Re-measure per model, per quant.
+
+## An acceptance line is one prompt, not the run
+
+llama.cpp's `draft acceptance = ...` in a slot's timing block is that **request's**
+figure. Read at the end of a multi-prompt leg it looks like the leg's aggregate
+and is not. Two numbers in an earlier version of this repo were quoted that way;
+one was re-derived (0.735 → **0.609**) and the other withdrawn. Sum the
+`accepted / generated` pairs across every request yourself.
+
+## A window is not a depth
+
+`-c 131072` says what the lane can hold. It says nothing about how full the KV
+was when the number was taken. The largest win in this repo, +54.4%, was
+measured at **~275 tokens** in a 131072 window — and the same drafter is a net
+loss at 176k. State both, always, and never let the window stand in for the
+depth.
